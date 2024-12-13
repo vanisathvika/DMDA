@@ -1,32 +1,35 @@
-#Data Load
-data=("iris")
+# Load the dataset
+data("iris")
 
+# Install required packages (uncomment if not already installed)
 install.packages("caret")
 install.packages("C50")
- 
-#Library invoke
+
+# Load libraries
 library(caret)
 library(C50)
 
-#To make the results consistent across the runs
+# Set seed for reproducibility
 set.seed(7)
 
-#Data Parition
-inTraininglocal<-createDataPartition(iris$Species,p=.70,list=F)
-training<-iris[inTraininglocal,]
-testing<-iris[-intraininglocal,]
+# Data Partition (70% training, 30% testing)
+inTraininglocal <- createDataPartition(iris$Species, p = 0.70, list = FALSE)
+training <- iris[inTraininglocal, ]
+testing <- iris[-inTraininglocal, ]
 
-#model Building
-model<-C5.0(Species~.,data=training)
+# Build the Decision Tree model
+model <- C5.0(Species ~ ., data = training)
 
-#Generate the model summary
+# Display the model summary
 summary(model)
 
-#Predict for test data set
-pred<-predict.C5.0(model,testing[,-5]) #type=:prob
-#Accuracy of the algorithms
-a<-table(testing$Species,pred)
-sum(diag(a))/sum(a)
+# Predict on the testing dataset
+pred <- predict(model, testing[, -5]) # Exclude the target column for prediction
 
-#Visualize the decision tree 
+# Calculate accuracy
+confusion_matrix <- table(Actual = testing$Species, Predicted = pred)
+accuracy <- sum(diag(confusion_matrix)) / sum(confusion_matrix)
+print(paste("Accuracy:", round(accuracy, 2)))
+
+# Visualize the decision tree
 plot(model)
